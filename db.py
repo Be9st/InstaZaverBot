@@ -6,7 +6,7 @@ def connect_to_db(user):
     cur = con.cursor()
     
     try: 
-        req = cur.execute('SELECT * FROM Insta WHERE users ="{}"'.format(user)).fetchone()[0]
+        cur.execute('SELECT * FROM Insta WHERE name ="{}"'.format(user))#.fetchone()[0]
         result = True
     except: 
         data = [user, datetime.strftime(datetime.now(), "%H:%M:%S")]
@@ -17,3 +17,5 @@ def connect_to_db(user):
     cur.close()
     con.close()
     return result
+
+print(connect_to_db('be9st'))
