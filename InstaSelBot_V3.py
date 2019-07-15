@@ -7,6 +7,7 @@ from time import sleep
 from datetime import datetime
 import pickle
 
+
 NAME = 'aleksmolik'
 PASSWORD = '1q2w3e4r5t'
 MESSAGE = 'Салам алейкум, брат!'
@@ -52,7 +53,9 @@ mobile_emulation = {
 option = Options()
 option.add_experimental_option("mobileEmulation", mobile_emulation)
 option.add_argument("--disable-infobars")
-option.add_argument("start-maximized")
+option.add_argument('--window-size=250,960')
+option.add_argument('--window-position=0,0')
+#option.add_argument("start-maximized")
 option.add_argument("--disable-extensions")
 # Pass the argument 1 to allow and 2 to block
 option.add_experimental_option("prefs", {
@@ -61,32 +64,22 @@ option.add_experimental_option("prefs", {
 driver = webdriver.Chrome(chrome_options = option)
 
 driver.get('https://www.google.ru/')
-#sleep(5)
-
 cookies = pickle.load(open("cookies.pkl", "rb"))
 for cookie in cookies:
     driver.add_cookie(cookie)
-
 
 driver.get("https://www.instagram.com")
 #driver.get("https://www.instagram.com/accounts/login/?source=auth_switcher/")
 # авторизация
 '''
-
 sleep(3)
 find_and_write_by_name('username', NAME)
 find_and_write_by_name('password', PASSWORD)
 
-
-
-
 # кнопка авторизации + проверка на ублюдка
-
 path_list = [
     '//*[@id="react-root"]/section/main/div/article/div/div[1]/div/form/div[6]/button'
 ]
-
-
 try:
     get_in = driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/article/div/div/div/form/div/button')
 except:
@@ -97,8 +90,6 @@ except:
     except:
         print('Третий тест на ублюдка')
         get_in = driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div/div/div/form/div[7]/button')
-
-
 get_in.click()
 sleep(5)
 print('Авторизация выполнена')
@@ -112,28 +103,28 @@ find_and_click('/html/body/div[3]/div/div/div[3]/button[2]')
 print('Уведомление смело пошло нахер')
 '''
 # открыть уведомления
-sleep(5)
+
+sleep(3)
 find_and_click('/html/body/div[3]/div/div/div[3]/button[2]', delay=5)
-driver.get('https://www.instagram.com/accounts/activity/')
-sleep(1)
-print('Уведомления открыты')
-
-
-
 
 def main():
     print('Щас буду искать пользователей')
     #найти пользователя в уведомелниях
 
-    try: find_and_click('//*[@id="react-root"]/section/main/div/div/div/div/div/div[2]/div/a')
-    except: find_and_click('//*[@id="react-root"]/section/main/div/div[1]/div/div[1]/div[2]/div/a')
-    print('Нашёл!')
+    try:
+        find_and_click('//*[@id="react-root"]/section/main/div/div/div/div/div/div[2]/div/a')
+        print('Нашёл!')
+    except:
+        try:
+            find_and_click('//*[@id="react-root"]/section/main/div/div[1]/div/div[1]/div[2]/div/a')
+            print('Нашёл!')
+        except: print('Не нашёл')
+
+
     user = driver.find_element_by_xpath('//*[@id="react-root"]/section/main/div/header/section/div[1]/h1')
     if connect_to_db(user.text):
         print('Пользователь есть в базе')
         sleep(3)
-
-
         '''
         #кнопка для отпраки сообщения в профиле
         find_and_click('//*[@id="react-root"]/section/main/div/header/section/div[2]/div[1]/button', delay=3)
@@ -154,9 +145,11 @@ def main():
 
 if __name__ == "__main__":
     while True:
-        try: 
+        try:
+            driver.get('https://www.instagram.com/accounts/activity/')
+            sleep(3)
             main()
         except:
-            driver.get('https://www.instagram.com/accounts/activity/')
+
             print('Перерыв')
             sleep(25)
